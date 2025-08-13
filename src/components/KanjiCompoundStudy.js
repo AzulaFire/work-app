@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import kanjiCompoundBreakdown from '@/app/data/kanjiCompoundBreakdown';
+import { Badge } from './ui/badge';
 
 export default function KanjiCompoundStudy() {
   const [index, setIndex] = useState(0);
@@ -58,12 +59,18 @@ export default function KanjiCompoundStudy() {
             <div className='text-5xl font-bold'>{current.compound}</div>
             <div className='mt-2 text-2xl text-gray-700'>{current.reading}</div>
             <div className='mt-2 text-xl text-gray-800'>{current.meaning}</div>
+            <div>
+              <Badge>{current.level}</Badge>
+            </div>
 
             {/* Kanji breakdown */}
             {current.kanji.length > 0 && (
               <div className='mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
                 {current.kanji.map((k, idx) => (
-                  <div key={idx} className='p-4 border rounded-lg bg-gray-100'>
+                  <div
+                    key={idx}
+                    className='p-4 border rounded-lg bg-gray-100 flex flex-col items-center justify-center h-full'
+                  >
                     <div className='text-3xl font-bold'>{k.char}</div>
                     <div className='text-lg text-gray-700'>{k.reading}</div>
                     <div className='text-base text-gray-600'>{k.meaning}</div>

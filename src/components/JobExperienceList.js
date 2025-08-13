@@ -1,10 +1,14 @@
+'use client';
 import React, { useMemo, useState } from 'react';
 import { differenceInMonths, parse } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import jobs from '@/app/data/jobs';
+import jobs_jp from '@/app/data/jobs_jp';
 
 const formatDuration = (startDateStr, endDateStr) => {
   const start = parse(startDateStr, 'yyyy-MM', new Date());
@@ -23,10 +27,15 @@ const formatDuration = (startDateStr, endDateStr) => {
 export default function JobExperienceList() {
   const [search, setSearch] = useState('');
   const [filterTag, setFilterTag] = useState(null);
+  const [isJapanese, setIsJapanese] = useState(false);
 
+  // Pick the active dataset based on language
+  const jobData = useMemo(() => (isJapanese ? jobs_jp : jobs), [isJapanese]);
+
+  // Filter jobs by search and tag
   const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      const searchLower = search.toLowerCase();
+    const searchLower = search.toLowerCase();
+    return jobData.filter((job) => {
       const combined = [
         job.title,
         job.location,
@@ -35,27 +44,40 @@ export default function JobExperienceList() {
       ]
         .join(' ')
         .toLowerCase();
+
       const matchesSearch = combined.includes(searchLower);
       const matchesTag = filterTag
         ? job.technologies?.includes(filterTag) ||
           job.osAndDatabase?.includes(filterTag)
         : true;
+
       return matchesSearch && matchesTag;
     });
-  }, [search, filterTag]);
+  }, [jobData, search, filterTag]);
 
+  // Extract unique tags from the active dataset
   const allTags = useMemo(() => {
     const tags = new Set();
-    jobs.forEach((job) => {
+    jobData.forEach((job) => {
       job.technologies?.forEach((t) => tags.add(t));
       job.osAndDatabase?.forEach((o) => tags.add(o));
     });
     return Array.from(tags).sort();
-  }, []);
+  }, [jobData]);
 
   return (
     <div className='p-6 max-w-5xl mx-auto'>
-      <h1 className='text-3xl font-bold mb-6 capitalize'>Work Experience</h1>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-3xl font-bold mb-6 capitalize'>Work Experience</h1>
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='japanese-mode'
+            checked={isJapanese}
+            onCheckedChange={setIsJapanese}
+          />
+          <Label htmlFor='japanese-mode'>Japanese</Label>
+        </div>
+      </div>
 
       <Input
         placeholder='Search by title, location, tech...'

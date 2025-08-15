@@ -73,9 +73,9 @@ export default function KanjiStudy() {
         <Button onClick={randomCard} variant='secondary'>
           Random
         </Button>
-        <Button onClick={toggleShuffle} variant='secondary'>
+        {/* <Button onClick={toggleShuffle} variant='secondary'>
           {shuffled ? 'Unshuffle' : 'Shuffle'}
-        </Button>
+        </Button> */}
       </div>
 
       {/* Progress */}
